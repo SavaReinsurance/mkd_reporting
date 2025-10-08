@@ -352,7 +352,24 @@ class DataLoader(DatabaseConnector):
             ].drop_duplicates()            
             
         if self.mapping_issues:
-            with pd.ExcelWriter(r'T:/Finance_ZS-SR/3_BO_Skupine_SavaRe/SO_MKD/mapping/insert_mapping.xlsx') as writer:
+            paths = [
+                r'C:/ASO/mapping/insert_mapping.xlsx',
+                r'T:/Finance_ZS-SR/3_BO_Skupine_SavaRe/SO_MKD/mapping/insert_mapping.xlsx'
+                ]
+            
+            writer = None        
+            for path in paths:
+                try:
+                    writer = pd.ExcelWriter(path)
+                    print(f'Connected to: {path}')
+                    break
+                except OSError:
+                    continue
+                
+            if writer is None:
+                raise OSError('All paths failed! Cannot save report.')
+        
+            with writer:
                 for sheet_name, df in self.mapping_issues.items():
                     df.to_excel(writer, sheet_name=sheet_name, index=False)
             
@@ -380,10 +397,28 @@ class ReportGenerator:
         
     def save_report(self) -> None:
         """Save all report templates to Excel file"""
-        with pd.ExcelWriter(f'T:/Finance_ZS-SR/3_BO_Skupine_SavaRe/SO_MKD/report_SO_MKD_{self.data.REPORT_DATE.date()}.xlsx') as writer:
+        
+        paths = [
+            f'C:/ASO/report_SO_MKD_{self.data.REPORT_DATE.date()}.xlsx',
+            f'T:/Finance_ZS-SR/3_BO_Skupine_SavaRe/SO_MKD/report_SO_MKD_{self.data.REPORT_DATE.date()}.xlsx'
+        ]
+        
+        writer = None    
+        for path in paths:
+            try:
+                writer = pd.ExcelWriter(path)
+                print(f'Connected to: {path}')
+                break
+            except OSError:
+                continue
+            
+        if writer is None:
+            raise OSError('All paths failed! Cannot save report.')
+    
+        with writer:
             for sheet_name, df in self.templates.items():
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
-
+        
 
 class RealizedProfitGenerator(ReportGenerator):
     def __init__(self, data_loader: DataLoader):
