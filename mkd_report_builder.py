@@ -424,7 +424,7 @@ class ReportGenerator:
         with writer:
             for sheet_name, df in self.templates.items():
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
-        
+
 
 class RealizedProfitGenerator(ReportGenerator):
     def __init__(self, data_loader: DataLoader):
