@@ -16,6 +16,32 @@ from password import password
 
 warnings.filterwarnings('ignore')
 
+def get_excel_writer(paths: List[str]) -> pd.ExcelWriter:
+    """
+    Try to create Excel writer for multiple paths, return the first successful one.
+    
+    Args:
+        paths: List of file paths to try
+        
+    Returns:
+        pd.ExcelWriter: Successfully created Excel writer
+        
+    Raises:
+        OSError: If all paths fail
+    """
+    writer = None
+    for path in paths:
+        try:
+            writer = pd.ExcelWriter(path)
+            print(f'Connected to: {path}')
+            break
+        except OSError:
+            continue
+    
+    if writer is None:
+        raise OSError(f'All paths failed! Tried: {", ".join(paths)}')
+    
+    return writer
 
 class DatabaseConnector():
     def __init__(self):
@@ -357,17 +383,7 @@ class DataLoader(DatabaseConnector):
                 r'T:/Finance_ZS-SR/3_BO_Skupine_SavaRe/SO_MKD/mapping/insert_mapping.xlsx'
                 ]
             
-            writer = None        
-            for path in paths:
-                try:
-                    writer = pd.ExcelWriter(path)
-                    print(f'Connected to: {path}')
-                    break
-                except OSError:
-                    continue
-                
-            if writer is None:
-                raise OSError('All paths failed! Cannot save report.')
+            writer = get_excel_writer(paths)
         
             with writer:
                 for sheet_name, df in self.mapping_issues.items():
@@ -403,17 +419,7 @@ class ReportGenerator:
             f'T:/Finance_ZS-SR/3_BO_Skupine_SavaRe/SO_MKD/report_SO_MKD_{self.data.REPORT_DATE.date()}.xlsx'
         ]
         
-        writer = None    
-        for path in paths:
-            try:
-                writer = pd.ExcelWriter(path)
-                print(f'Connected to: {path}')
-                break
-            except OSError:
-                continue
-            
-        if writer is None:
-            raise OSError('All paths failed! Cannot save report.')
+        writer = get_excel_writer(paths)
     
         with writer:
             for sheet_name, df in self.templates.items():
