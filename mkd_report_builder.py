@@ -200,7 +200,7 @@ class DataLoader(DatabaseConnector):
             	INVESTMENT_TYPE,
             	IFRS_GROUP,
             	INVESTMENT_NAME,
-            	ISIN,
+            	--ISIN,
             	NOMINAL_VALUE_OF_LOT_QC,
             	NUMBER_OF_LOTS as KOLIČINA,
             	QUOTATION_CURRENCY,
