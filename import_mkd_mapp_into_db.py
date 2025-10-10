@@ -21,10 +21,20 @@ table_mappings = {
      'Missing Simcorp Mapping': 'MKD_REG_REPORT_MAPPING'
      }
 
-PATH = 'T:/Finance_ZS-SR/3_BO_Skupine_SavaRe/SO_MKD/mapping'
+PATHS = [
+    r'C:/ASO/mapping/',
+    r'T:/Finance_ZS-SR/3_BO_Skupine_SavaRe/SO_MKD/mapping'
+]
+
 file_name = 'insert_mapping'
 
-df_dict = pd.read_excel(f"{PATH}/{file_name}.xlsx", sheet_name=None)
+for path in PATHS:
+    try:
+        df_dict = pd.read_excel(f"{path}/{file_name}.xlsx", sheet_name=None)
+        print(f'Connected to: {path}')
+        break
+    except OSError:
+        continue
 
 for k, df in df_dict.items():
     sql_table = table_mappings.get(k)
