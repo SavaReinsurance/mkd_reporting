@@ -38,4 +38,4 @@ for path in PATHS:
 
 for k, df in df_dict.items():
     sql_table = table_mappings.get(k)
-    import_data('FIN', sql_table, df, conn)
+    import_data('FIN', sql_table, df, conn, custom_path="C:/ASO/Import_DWH")
